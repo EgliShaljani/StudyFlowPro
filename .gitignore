@@ -1,0 +1,23 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+
+# Build output
+**/bin/
+**/obj/
+TestResults/
+
+# Database
+src/StudyFlowPro.Web/studyflowpro.db
+src/StudyFlowPro.Web/*.db-shm
+src/StudyFlowPro.Web/*.db-wal
+
+# Logs
+*.log
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/

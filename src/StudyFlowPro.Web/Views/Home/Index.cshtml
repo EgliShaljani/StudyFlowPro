@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "Overview";
+}
+
+<section class="landing-hero">
+    <div class="hero-copy">
+        <span class="section-tag">Student productivity platform</span>
+        <h1>Plan every subject, track every deadline, and stay ahead without the chaos.</h1>
+        <p>
+            StudyFlowPro is a modern academic workflow hub for students who want structure, visibility, and cleaner execution across subjects, assignments, and revision cycles.
+        </p>
+        <div class="hero-actions">
+            <a class="primary-button large-button" asp-area="Identity" asp-page="/Account/Register">Create account</a>
+            <a class="outline-button large-button" asp-area="Identity" asp-page="/Account/Login">Open demo</a>
+        </div>
+        <div class="demo-credentials">
+            <div>
+                <strong>Student demo</strong>
+                <span><code>student@studyflowpro.dev</code> / <code>StudyFlow123!</code></span>
+            </div>
+            <div>
+                <strong>Admin demo</strong>
+                <span><code>admin@studyflowpro.dev</code> / <code>StudyFlow123!</code></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-preview">
+        <div class="preview-card preview-card-large">
+            <div class="preview-card-header">
+                <span>Focus snapshot</span>
+                <strong>Weekly momentum</strong>
+            </div>
+            <div class="preview-metric-row">
+                <div class="preview-metric accent-blue">
+                    <span>12</span>
+                    <small>Open tasks</small>
+                </div>
+                <div class="preview-metric accent-green">
+                    <span>78%</span>
+                    <small>Completion rate</small>
+                </div>
+                <div class="preview-metric accent-amber">
+                    <span>3</span>
+                    <small>Due soon</small>
+                </div>
+            </div>
+            <div class="preview-list">
+                <article>
+                    <strong>Software Engineering</strong>
+                    <span>Finalize API architecture diagram</span>
+                </article>
+                <article>
+                    <strong>Data Science</strong>
+                    <span>Tune random forest baseline</span>
+                </article>
+                <article>
+                    <strong>Business Communication</strong>
+                    <span>Refine final presentation deck</span>
+                </article>
+            </div>
+        </div>
+        <div class="preview-card">
+            <div class="preview-card-header">
+                <span>Live notifications</span>
+                <strong>SignalR deadline feed</strong>
+            </div>
+            <p>Receive upcoming and overdue deadline alerts in real time while you work.</p>
+        </div>
+    </div>
+</section>
+
+<section class="feature-strip">
+    <article class="feature-card">
+        <h2>Professional dashboard</h2>
+        <p>Understand progress at a glance with completion rate, overdue work, and subject-level momentum.</p>
+    </article>
+    <article class="feature-card">
+        <h2>Identity and roles</h2>
+        <p>Secure registration, sign-in, and role-based authorization with separate student and admin experiences.</p>
+    </article>
+    <article class="feature-card">
+        <h2>Smart task workflow</h2>
+        <p>Organize work by subject, priority, status, and due date with filters that feel like a real product.</p>
+    </article>
+    <article class="feature-card">
+        <h2>Portfolio-ready foundation</h2>
+        <p>Built with ASP.NET Core MVC, EF Core, SignalR, xUnit, and clean project structure for continued growth.</p>
+    </article>
+</section>
+
+<section class="cta-panel">
+    <div>
+        <span class="section-tag">Why it stands out</span>
+        <h2>More than a template. Closer to a real SaaS product.</h2>
+        <p>
+            StudyFlowPro is intentionally designed to feel polished on GitHub and practical in Visual Studio, with seeded demo data, modern styling, dark mode, and maintainable feature organization.
+        </p>
+    </div>
+    <a class="primary-button" asp-area="Identity" asp-page="/Account/Register">Start building on it</a>
+</section>

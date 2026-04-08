@@ -1,0 +1,65 @@
+@model SubjectsIndexViewModel
+@{
+    ViewData["Title"] = "Subjects";
+}
+
+<section class="page-header-card">
+    <div>
+        <span class="section-tag">Subjects</span>
+        <h1>Organize your academic tracks.</h1>
+        <p>Group study tasks by course, keep context in one place, and make priorities easier to manage.</p>
+    </div>
+    <div class="header-actions">
+        @if (Model.IsAdmin)
+        {
+            <form method="get" class="inline-filter-card compact-filter-card">
+                <label asp-for="SelectedOwnerId">Student scope</label>
+                <select asp-for="SelectedOwnerId" asp-items="Model.OwnerOptions" class="form-select">
+                    <option value="">All users</option>
+                </select>
+                <button type="submit" class="outline-button">Apply</button>
+            </form>
+        }
+        <a class="primary-button" asp-action="Create">New subject</a>
+    </div>
+</section>
+
+@if (Model.Items.Count == 0)
+{
+    <section class="panel-card">
+        <div class="empty-state">
+            <strong>No subjects yet.</strong>
+            <p>Create your first subject to start structuring tasks and progress.</p>
+            <a class="primary-button" asp-action="Create">Create subject</a>
+        </div>
+    </section>
+}
+else
+{
+    <section class="subject-card-grid">
+        @foreach (var subject in Model.Items)
+        {
+            <article class="subject-card">
+                <div class="subject-card-accent" style="background:@subject.AccentColor"></div>
+                <div class="subject-card-header">
+                    <div>
+                        <span class="subject-code">@subject.Code</span>
+                        <h2>@subject.Name</h2>
+                    </div>
+                    <span class="subject-owner">@subject.OwnerName</span>
+                </div>
+                <p>@(subject.Description ?? "No subject overview added yet.")</p>
+                <div class="subject-stat-row">
+                    <span>@subject.OpenTasks open</span>
+                    <span>@subject.CompletedTasks completed</span>
+                    <span>@(subject.NextDueDate?.ToString("MMM dd") ?? "No pending date")</span>
+                </div>
+                <div class="card-actions">
+                    <a class="text-link" asp-action="Details" asp-route-id="@subject.Id">Details</a>
+                    <a class="text-link" asp-action="Edit" asp-route-id="@subject.Id">Edit</a>
+                    <a class="text-link danger-link" asp-action="Delete" asp-route-id="@subject.Id">Delete</a>
+                </div>
+            </article>
+        }
+    </section>
+}

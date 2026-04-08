@@ -1,0 +1,5 @@
+@model StudyFlowPro.Web.Models.Enums.StudyTaskStatus
+
+<span class="status-pill status-@Model.ToString().ToLowerInvariant()">
+    @Model.GetDisplayName()
+</span>

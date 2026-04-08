@@ -1,0 +1,82 @@
+@model StudyTaskFormViewModel
+@{
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Task" : "Create Task";
+}
+
+<section class="form-shell">
+    <article class="form-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag">Study task</span>
+                <h1>@(isEdit ? "Refine study task" : "Create a study task")</h1>
+            </div>
+            <a class="text-link" asp-action="Index">Back to task board</a>
+        </div>
+
+        <form method="post" class="app-form">
+            @Html.AntiForgeryToken()
+            @if (isEdit)
+            {
+                <input asp-for="Id" type="hidden" />
+            }
+
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+            <div class="form-grid">
+                <div class="form-field form-field-full">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" class="form-control" placeholder="e.g. Finalize API architecture diagram" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-field form-field-full">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Capture context, deliverables, and next steps."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="SubjectId"></label>
+                    <select asp-for="SubjectId" asp-items="Model.SubjectOptions" class="form-select">
+                        <option value="">Select a subject</option>
+                    </select>
+                    <span asp-validation-for="SubjectId" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="DueDate"></label>
+                    <input asp-for="DueDate" class="form-control" type="date" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="Priority"></label>
+                    <select asp-for="Priority" asp-items="Html.GetEnumSelectList<StudyTaskPriority>()" class="form-select"></select>
+                    <span asp-validation-for="Priority" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="Status"></label>
+                    <select asp-for="Status" asp-items="Html.GetEnumSelectList<StudyTaskStatus>()" class="form-select"></select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="EstimatedHours"></label>
+                    <input asp-for="EstimatedHours" class="form-control" type="number" step="0.5" min="0.5" max="40" />
+                    <span asp-validation-for="EstimatedHours" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a class="outline-button" asp-action="Index">Cancel</a>
+                <button type="submit" class="primary-button">@(isEdit ? "Save changes" : "Create task")</button>
+            </div>
+        </form>
+    </article>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

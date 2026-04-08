@@ -1,0 +1,74 @@
+@model TaskDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="page-header-card">
+    <div>
+        <span class="section-tag">Task details</span>
+        <h1>@Model.Title</h1>
+        <p>@(Model.Description ?? "No additional task notes were added.")</p>
+    </div>
+    <div class="header-actions">
+        <a class="outline-button" asp-action="Edit" asp-route-id="@Model.Id">Edit task</a>
+        <a class="primary-button" asp-action="Index">Back to board</a>
+    </div>
+</section>
+
+<section class="metrics-grid">
+    <article class="metric-card">
+        <span>Subject</span>
+        <strong>@Model.SubjectName</strong>
+        <small>Academic track</small>
+    </article>
+    <article class="metric-card">
+        <span>Owner</span>
+        <strong>@Model.OwnerName</strong>
+        <small>Assigned owner</small>
+    </article>
+    <article class="metric-card">
+        <span>Due date</span>
+        <strong>@Model.DueDate.ToString("MMM dd")</strong>
+        <small>@Model.DueDate.ToString("yyyy")</small>
+    </article>
+    <article class="metric-card">
+        <span>Effort</span>
+        <strong>@Model.EstimatedHours.ToString("0.#")h</strong>
+        <small>Estimated focus time</small>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag">Status</span>
+                <h2>Execution snapshot</h2>
+            </div>
+        </div>
+        <div class="detail-tags">
+            @await Html.PartialAsync("Partials/_PriorityBadge", Model.Priority)
+            @await Html.PartialAsync("Partials/_TaskStatusBadge", Model.Status)
+            <span class="subject-code-badge" style="border-color:@Model.SubjectAccentColor">@Model.SubjectName</span>
+        </div>
+    </article>
+
+    <article class="panel-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag">Timeline</span>
+                <h2>Activity metadata</h2>
+            </div>
+        </div>
+        <div class="detail-list">
+            <div>
+                <span>Created</span>
+                <strong>@Model.CreatedOnUtc.ToLocalTime().ToString("MMM dd, yyyy HH:mm")</strong>
+            </div>
+            <div>
+                <span>Completed</span>
+                <strong>@(Model.CompletedOnUtc?.ToLocalTime().ToString("MMM dd, yyyy HH:mm") ?? "Not completed yet")</strong>
+            </div>
+        </div>
+    </article>
+</section>

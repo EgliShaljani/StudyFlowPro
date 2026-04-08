@@ -1,0 +1,127 @@
+@using StudyFlowPro.Web.Models.Enums
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var isAdmin = User.IsInRole(ApplicationRoles.Admin);
+    var pageTitle = ViewData["Title"]?.ToString();
+    string ActiveClass(string controllerName) => string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase) ? "nav-link active" : "nav-link";
+}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(string.IsNullOrWhiteSpace(pageTitle) ? "StudyFlowPro" : $"{pageTitle} · StudyFlowPro")</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudyFlowPro.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="app-body" data-authenticated="@(isAuthenticated.ToString().ToLowerInvariant())">
+    <div class="background-orb background-orb-one"></div>
+    <div class="background-orb background-orb-two"></div>
+
+    <header class="topbar">
+        <div class="container-xxl">
+            <nav class="navbar navbar-expand-lg app-navbar">
+                <a class="brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">SF</span>
+                    <span class="brand-copy">
+                        <strong>StudyFlowPro</strong>
+                        <small>Academic command center</small>
+                    </span>
+                </a>
+
+                <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-lg-4 me-auto gap-lg-2">
+                        <li class="nav-item">
+                            <a class="@ActiveClass("Home")" asp-controller="Home" asp-action="Index">Overview</a>
+                        </li>
+                        @if (isAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="@ActiveClass("Dashboard")" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="@ActiveClass("Subjects")" asp-controller="Subjects" asp-action="Index">Subjects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="@ActiveClass("Tasks")" asp-controller="Tasks" asp-action="Index">Study Tasks</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="app-actions">
+                        @if (isAuthenticated)
+                        {
+                            <div class="notification-shell">
+                                <button type="button" class="icon-button" id="notificationToggle" aria-expanded="false" aria-controls="notificationPanel">
+                                    <span>Deadlines</span>
+                                    <span class="notification-count" id="notificationCount">0</span>
+                                </button>
+                                <section class="notification-panel" id="notificationPanel" hidden>
+                                    <div class="notification-panel-header">
+                                        <div>
+                                            <h2>Deadline updates</h2>
+                                            <p>Upcoming and overdue work from your study plan.</p>
+                                        </div>
+                                    </div>
+                                    <div class="notification-empty" id="notificationEmpty">
+                                        You are in great shape. No urgent deadline alerts right now.
+                                    </div>
+                                    <div class="notification-list" id="notificationList"></div>
+                                </section>
+                            </div>
+                        }
+
+                        <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false">
+                            <span data-theme-label>Dark mode</span>
+                        </button>
+
+                        @if (isAdmin)
+                        {
+                            <span class="role-badge">Admin</span>
+                        }
+
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="toast-stack" id="notificationToastStack"></div>
+
+    <main class="container-xxl app-main">
+        <partial name="Partials/_FlashMessage" />
+        @RenderBody()
+    </main>
+
+    <footer class="app-footer">
+        <div class="container-xxl footer-grid">
+            <div>
+                <strong>StudyFlowPro</strong>
+                <p>Built with ASP.NET Core, EF Core, Identity, SignalR, and a portfolio-first product mindset.</p>
+            </div>
+            <div class="footer-links">
+                <a asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <a asp-controller="Subjects" asp-action="Index">Subjects</a>
+                <a asp-controller="Tasks" asp-action="Index">Tasks</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.11/dist/browser/signalr.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

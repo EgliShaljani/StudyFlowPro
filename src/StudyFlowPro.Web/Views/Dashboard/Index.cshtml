@@ -1,0 +1,172 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="page-header-card">
+    <div>
+        <span class="section-tag">Dashboard</span>
+        <h1>Welcome back, @Model.WelcomeName.</h1>
+        <p>Keep momentum across your subjects, surface at-risk deadlines, and move work forward with clarity.</p>
+    </div>
+
+    @if (Model.IsAdmin)
+    {
+        <form method="get" class="inline-filter-card">
+            <label asp-for="SelectedOwnerId">Student scope</label>
+            <select asp-for="SelectedOwnerId" asp-items="Model.OwnerOptions" class="form-select">
+                <option value="">All users</option>
+            </select>
+            <button type="submit" class="outline-button">Apply</button>
+        </form>
+    }
+</section>
+
+<section class="metrics-grid">
+    <article class="metric-card">
+        <span>Total tasks</span>
+        <strong>@Model.Metrics.TotalTasks</strong>
+        <small>All tracked work in scope</small>
+    </article>
+    <article class="metric-card">
+        <span>Completed</span>
+        <strong>@Model.Metrics.CompletedTasks</strong>
+        <small>Tasks already finished</small>
+    </article>
+    <article class="metric-card">
+        <span>Pending</span>
+        <strong>@Model.Metrics.PendingTasks</strong>
+        <small>Tasks still active</small>
+    </article>
+    <article class="metric-card metric-card-accent">
+        <span>Completion rate</span>
+        <strong>@Model.Metrics.CompletionRate%</strong>
+        <small>@Model.Metrics.OverdueTasks overdue right now</small>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag">Upcoming</span>
+                <h2>Next deadlines</h2>
+            </div>
+            <a class="text-link" asp-controller="Tasks" asp-action="Index">See all tasks</a>
+        </div>
+
+        @if (Model.UpcomingTasks.Count == 0)
+        {
+            <div class="empty-state">
+                <strong>No upcoming deadlines.</strong>
+                <p>Your current task list is clear for the next stretch.</p>
+            </div>
+        }
+        else
+        {
+            <div class="deadline-list">
+                @foreach (var task in Model.UpcomingTasks)
+                {
+                    <article class="deadline-card">
+                        <div class="deadline-meta">
+                            <span class="subject-dot" style="background:@task.SubjectAccentColor"></span>
+                            <div>
+                                <a asp-controller="Tasks" asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                <small>@task.SubjectName@if (Model.IsAdmin){<text> · @task.OwnerName</text>}</small>
+                            </div>
+                        </div>
+                        <div class="deadline-tags">
+                            @await Html.PartialAsync("Partials/_PriorityBadge", task.Priority)
+                            @await Html.PartialAsync("Partials/_TaskStatusBadge", task.Status)
+                            <span class="date-pill">@task.DueDate.ToString("MMM dd")</span>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </article>
+
+    <article class="panel-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag warning-tag">Attention</span>
+                <h2>Overdue work</h2>
+            </div>
+            <a class="text-link" asp-controller="Tasks" asp-action="Index" asp-route-status="@StudyTaskStatus.ToDo">Open task board</a>
+        </div>
+
+        @if (Model.OverdueTasks.Count == 0)
+        {
+            <div class="empty-state">
+                <strong>No overdue tasks.</strong>
+                <p>Everything urgent is under control at the moment.</p>
+            </div>
+        }
+        else
+        {
+            <div class="deadline-list">
+                @foreach (var task in Model.OverdueTasks)
+                {
+                    <article class="deadline-card overdue-card">
+                        <div class="deadline-meta">
+                            <span class="subject-dot" style="background:@task.SubjectAccentColor"></span>
+                            <div>
+                                <a asp-controller="Tasks" asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                <small>@task.SubjectName@if (Model.IsAdmin){<text> · @task.OwnerName</text>}</small>
+                            </div>
+                        </div>
+                        <div class="deadline-tags">
+                            @await Html.PartialAsync("Partials/_PriorityBadge", task.Priority)
+                            <span class="date-pill overdue-pill">@task.DueDate.ToString("MMM dd")</span>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </article>
+</section>
+
+<section class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="section-tag">Subjects</span>
+            <h2>Study progress by subject</h2>
+        </div>
+        <a class="text-link" asp-controller="Subjects" asp-action="Index">Manage subjects</a>
+    </div>
+
+    @if (Model.SubjectProgress.Count == 0)
+    {
+        <div class="empty-state">
+            <strong>No subject activity yet.</strong>
+            <p>Create a subject and start adding work to unlock progress insights.</p>
+        </div>
+    }
+    else
+    {
+        <div class="subject-progress-list">
+            @foreach (var subject in Model.SubjectProgress)
+            {
+                <article class="subject-progress-card">
+                    <div class="subject-progress-heading">
+                        <div class="subject-heading-copy">
+                            <span class="subject-dot" style="background:@subject.SubjectAccentColor"></span>
+                            <div>
+                                <a asp-controller="Subjects" asp-action="Details" asp-route-id="@subject.SubjectId">@subject.SubjectName</a>
+                                <small>@subject.SubjectCode · @subject.OpenTasks open</small>
+                            </div>
+                        </div>
+                        <strong>@subject.CompletionRate%</strong>
+                    </div>
+                    <div class="progress-bar">
+                        <span style="width:@subject.CompletionRate%"></span>
+                    </div>
+                    <div class="subject-progress-foot">
+                        <span>@subject.CompletedTasks of @subject.TotalTasks completed</span>
+                        <span>@(subject.NextDueDate?.ToString("MMM dd") ?? "No pending dates")</span>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>
