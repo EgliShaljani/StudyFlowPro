@@ -1,0 +1,83 @@
+@model SubjectDetailsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="page-header-card">
+    <div>
+        <span class="section-tag">Subject details</span>
+        <h1>@Model.Name</h1>
+        <p>@(Model.Description ?? "No description has been added for this subject yet.")</p>
+    </div>
+    <div class="header-actions">
+        <span class="subject-code-badge" style="border-color:@Model.AccentColor">@Model.Code</span>
+        <a class="outline-button" asp-action="Edit" asp-route-id="@Model.Id">Edit subject</a>
+        <a class="primary-button" asp-controller="Tasks" asp-action="Create">Add task</a>
+    </div>
+</section>
+
+<section class="metrics-grid">
+    <article class="metric-card">
+        <span>Owner</span>
+        <strong>@Model.OwnerName</strong>
+        <small>Primary subject owner</small>
+    </article>
+    <article class="metric-card">
+        <span>Total tasks</span>
+        <strong>@Model.TotalTasks</strong>
+        <small>Tracked under this subject</small>
+    </article>
+    <article class="metric-card">
+        <span>Completed</span>
+        <strong>@Model.CompletedTasks</strong>
+        <small>Finished work</small>
+    </article>
+    <article class="metric-card">
+        <span>Active</span>
+        <strong>@(Model.TotalTasks - Model.CompletedTasks)</strong>
+        <small>Still in progress</small>
+    </article>
+</section>
+
+<section class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="section-tag">Tasks</span>
+            <h2>Task list for this subject</h2>
+        </div>
+    </div>
+
+    @if (Model.Tasks.Count == 0)
+    {
+        <div class="empty-state">
+            <strong>No tasks linked yet.</strong>
+            <p>Use this subject as a hub for assignments, study blocks, and deadlines.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-shell">
+            <table class="table app-table">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in Model.Tasks)
+                    {
+                        <tr>
+                            <td><a asp-controller="Tasks" asp-action="Details" asp-route-id="@task.Id">@task.Title</a></td>
+                            <td>@task.DueDate.ToString("MMM dd, yyyy")</td>
+                            <td>@await Html.PartialAsync("Partials/_TaskStatusBadge", task.Status)</td>
+                            <td>@await Html.PartialAsync("Partials/_PriorityBadge", task.Priority)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

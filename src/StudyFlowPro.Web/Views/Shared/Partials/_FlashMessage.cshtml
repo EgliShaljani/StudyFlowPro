@@ -1,0 +1,11 @@
+@{
+    var message = TempData["StatusMessage"]?.ToString();
+    var tone = TempData["StatusTone"]?.ToString() ?? "success";
+}
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="flash-banner flash-@tone">
+        <span>@message</span>
+    </div>
+}

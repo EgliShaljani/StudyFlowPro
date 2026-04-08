@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentUser = SignInManager.IsSignedIn(User)
+        ? await UserManager.GetUserAsync(User)
+        : null;
+}
+
+@if (SignInManager.IsSignedIn(User) && currentUser is not null)
+{
+    <div class="auth-cluster">
+        <a class="user-chip" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage account">
+            <span class="user-chip-name">@currentUser.FullName</span>
+            <small>@currentUser.Email</small>
+        </a>
+        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = string.Empty })">
+            <button type="submit" class="outline-button">Sign out</button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="auth-cluster">
+        <a class="outline-button" asp-area="Identity" asp-page="/Account/Login">Sign in</a>
+        <a class="primary-button" asp-area="Identity" asp-page="/Account/Register">Create account</a>
+    </div>
+}

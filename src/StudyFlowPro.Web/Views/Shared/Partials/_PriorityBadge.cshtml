@@ -1,0 +1,5 @@
+@model StudyFlowPro.Web.Models.Enums.StudyTaskPriority
+
+<span class="priority-pill priority-@Model.ToString().ToLowerInvariant()">
+    @Model.GetDisplayName()
+</span>

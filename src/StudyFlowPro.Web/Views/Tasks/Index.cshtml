@@ -1,0 +1,158 @@
+@model TasksIndexViewModel
+@{
+    ViewData["Title"] = "Study Tasks";
+}
+
+<section class="page-header-card">
+    <div>
+        <span class="section-tag">Study tasks</span>
+        <h1>Manage tasks with focus and context.</h1>
+        <p>Filter by subject, priority, status, or date range to find the next best work instantly.</p>
+    </div>
+    <div class="header-actions">
+        <a class="primary-button" asp-action="Create">New task</a>
+    </div>
+</section>
+
+<section class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="section-tag">Filters</span>
+            <h2>Refine your task board</h2>
+        </div>
+        <div class="header-stats">
+            <span>@Model.VisibleTaskCount visible</span>
+            <span>@Model.OverdueTaskCount overdue</span>
+        </div>
+    </div>
+
+    <form method="get" class="app-form">
+        <div class="filter-grid">
+            <div class="form-field">
+                <label asp-for="Filter.SearchTerm">Search</label>
+                <input asp-for="Filter.SearchTerm" class="form-control" placeholder="Task title or description" />
+            </div>
+
+            @if (Model.IsAdmin)
+            {
+                <div class="form-field">
+                    <label asp-for="Filter.OwnerId">Student</label>
+                    <select asp-for="Filter.OwnerId" asp-items="Model.OwnerOptions" class="form-select">
+                        <option value="">All users</option>
+                    </select>
+                </div>
+            }
+
+            <div class="form-field">
+                <label asp-for="Filter.SubjectId">Subject</label>
+                <select asp-for="Filter.SubjectId" asp-items="Model.SubjectOptions" class="form-select">
+                    <option value="">All subjects</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Filter.Priority">Priority</label>
+                <select asp-for="Filter.Priority" asp-items="Html.GetEnumSelectList<StudyTaskPriority>()" class="form-select">
+                    <option value="">All priorities</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Filter.Status">Status</label>
+                <select asp-for="Filter.Status" asp-items="Html.GetEnumSelectList<StudyTaskStatus>()" class="form-select">
+                    <option value="">All statuses</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Filter.DueFrom">Due from</label>
+                <input asp-for="Filter.DueFrom" class="form-control" type="date" />
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Filter.DueTo">Due to</label>
+                <input asp-for="Filter.DueTo" class="form-control" type="date" />
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a class="outline-button" asp-action="Index">Reset</a>
+            <button type="submit" class="primary-button">Apply filters</button>
+        </div>
+    </form>
+</section>
+
+<section class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="section-tag">Board</span>
+            <h2>Task list</h2>
+        </div>
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="empty-state">
+            <strong>No tasks match your filters.</strong>
+            <p>Adjust the filters or create a new task to populate the board.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-shell">
+            <table class="table app-table">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Subject</th>
+                        @if (Model.IsAdmin)
+                        {
+                            <th>Owner</th>
+                        }
+                        <th>Due</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Effort</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <div class="table-title">
+                                    <a asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                    @if (task.IsOverdue)
+                                    {
+                                        <small class="danger-text">Overdue</small>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <span class="subject-inline">
+                                    <span class="subject-dot" style="background:@task.SubjectAccentColor"></span>
+                                    @task.SubjectName
+                                </span>
+                            </td>
+                            @if (Model.IsAdmin)
+                            {
+                                <td>@task.OwnerName</td>
+                            }
+                            <td>@task.DueDate.ToString("MMM dd, yyyy")</td>
+                            <td>@await Html.PartialAsync("Partials/_PriorityBadge", task.Priority)</td>
+                            <td>@await Html.PartialAsync("Partials/_TaskStatusBadge", task.Status)</td>
+                            <td>@task.EstimatedHours.ToString("0.#")h</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a class="text-link" asp-action="Edit" asp-route-id="@task.Id">Edit</a>
+                                    <a class="text-link danger-link" asp-action="Delete" asp-route-id="@task.Id">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

@@ -1,0 +1,34 @@
+@model TaskDetailsViewModel
+@{
+    ViewData["Title"] = "Delete Task";
+}
+
+<section class="form-shell">
+    <article class="form-card danger-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag warning-tag">Danger zone</span>
+                <h1>Delete @Model.Title?</h1>
+                <p>This action removes the task from the board and deadline feed.</p>
+            </div>
+            <a class="text-link" asp-action="Details" asp-route-id="@Model.Id">Back to details</a>
+        </div>
+
+        <div class="danger-summary">
+            <span class="subject-code-badge" style="border-color:@Model.SubjectAccentColor">@Model.SubjectName</span>
+            <p>@(Model.Description ?? "No description provided.")</p>
+            <div class="detail-tags">
+                @await Html.PartialAsync("Partials/_PriorityBadge", Model.Priority)
+                @await Html.PartialAsync("Partials/_TaskStatusBadge", Model.Status)
+            </div>
+        </div>
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-actions">
+                <a class="outline-button" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+                <button type="submit" class="danger-button">Delete task</button>
+            </div>
+        </form>
+    </article>
+</section>

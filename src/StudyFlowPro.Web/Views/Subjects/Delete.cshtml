@@ -1,0 +1,39 @@
+@model SubjectDetailsViewModel
+@{
+    ViewData["Title"] = "Delete Subject";
+    var hasLinkedTasks = Model.TotalTasks > 0;
+}
+
+<section class="form-shell">
+    <article class="form-card danger-card">
+        <div class="panel-header">
+            <div>
+                <span class="section-tag warning-tag">Danger zone</span>
+                <h1>Delete @Model.Name?</h1>
+                <p>This action removes the subject record. Existing tasks must be cleared first.</p>
+            </div>
+            <a class="text-link" asp-action="Details" asp-route-id="@Model.Id">Back to details</a>
+        </div>
+
+        <div class="danger-summary">
+            <span class="subject-code-badge" style="border-color:@Model.AccentColor">@Model.Code</span>
+            <p>@(Model.Description ?? "No description provided.")</p>
+            <strong>@Model.TotalTasks linked tasks</strong>
+        </div>
+
+        @if (hasLinkedTasks)
+        {
+            <div class="validation-summary">
+                Delete or move the linked tasks before removing this subject.
+            </div>
+        }
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-actions">
+                <a class="outline-button" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+                <button type="submit" class="danger-button" disabled="@hasLinkedTasks">Delete subject</button>
+            </div>
+        </form>
+    </article>
+</section>
